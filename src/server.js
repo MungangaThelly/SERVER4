@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());  // Parse JSON-formatted request bodies
 
 // Define the POST route for /data.json (you were missing this route)
-app.post('/data', (req, res) => {
+app.post('/data.json', (req, res) => {
     const choice = req.body.choice;
 
     // Check if choice is provided
@@ -73,7 +73,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Root route to check if the server is running
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Fix path.join usage
+    res.sendFile(path.join(__dirname, '../public/index.html')); // Fix path.join usage
 });
 
 
