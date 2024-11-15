@@ -8,10 +8,10 @@ const PORT = 3000
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, '../public')))
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'))
+  res.sendFile(path.join(__dirname, '../public', '../index.html'))
 })
 
 app.post('/weather', (req, res) => {
