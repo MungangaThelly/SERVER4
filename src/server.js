@@ -5,11 +5,9 @@ const weatherData = require('./data/weather.json')
 const app = express()
 const PORT = 3000
 
-// Use built-in Express middleware
 app.use(express.urlencoded({ extended: true }))
-app.use(express.json()) // If you expect JSON data
+app.use(express.json())
 
-// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/', (req, res) => {
@@ -23,7 +21,15 @@ app.post('/weather', (req, res) => {
     return res.status(400).json({ error: 'Choice parameter is required.' })
   }
 
-  const filteredData = weatherData.filter((entry) => entry.type === choice)
+  // Handle the case where weatherData is an object
+  const entries = Array.isArray(weatherData)
+    ? weatherData
+    : Object.keys(weatherData).map(key => ({
+        type: key,
+        ...weatherData[key]
+      }))
+
+  const filteredData = entries.filter(entry => entry.type === choice)
 
   if (filteredData.length === 0) {
     return res.status(404).json({ error: 'No matching weather data found.' })
