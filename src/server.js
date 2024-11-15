@@ -1,94 +1,25 @@
-// server.js
+const express = require('express')
+const bodyParser = require('body-parser')
+const path = require('path')
+const weatherData = require('./data/weather.json')
 
-require('dotenv').config();  // Load environment variables from .env file
-const express = require('express');
-const axios = require('axios');
-const path = require('path'); // Correctly using path
-const data = require('./data/data.json'); // Ensure the path to the data.json is correct
+const app = express()
+const PORT = 3000
 
-const app = express();
+app.use(bodyParser.urlencoded({ extended: true }))
 
-// Middleware to parse JSON requests
-app.use(express.json());  // Parse JSON-formatted request bodies
-
-// Define the POST route for /data.json (you were missing this route)
-app.post('/data.json', (req, res) => {
-    const choice = req.body.choice;
-
-    // Check if choice is provided
-    if (!choice) {
-        return res.status(400).json({ error: 'Choice is required' });
-    }
-
-    // Filter the data based on the choice
-    const filteredData = data.filter((entry) => entry.type === choice);
-
-    // Send the filtered data as the response
-    res.json(filteredData);
-});
-
-// Define the Open-Meteo API URL
-const METEO_API_URL = 'https://api.open-meteo.com/v1/forecast';
-
-// Endpoint to get weather for a specific location (latitude, longitude)
-app.get('/weather', async (req, res) => {
-    const { lat, lon } = req.query;  // Get lat and lon from query params
-    
-    if (!lat || !lon) {
-        return res.status(400).json({ error: 'Latitude and longitude are required' });
-    }
-
-    try {
-        // Fetch the weather data from Open-Meteo API
-        const response = await axios.get(METEO_API_URL, {
-            params: {
-                latitude: lat,
-                longitude: lon,
-                hourly: 'temperature_2m',  // Hourly temperature at 2m above ground
-            }
-        });
-
-        // Extract the relevant weather data
-        const weatherData = {
-            location: `Latitude: ${lat}, Longitude: ${lon}`,
-            temperature: response.data.hourly.temperature_2m[0], // Get the first hourly temperature
-            time: response.data.hourly.time[0], // Corresponding timestamp for the first hourly temperature
-        };
-
-        // Log the weather data to the console
-        console.log(`Weather Data for ${weatherData.location}:`);
-        console.log(`Temperature: ${weatherData.temperature}°C`);
-        console.log(`Time: ${weatherData.time}`);
-
-        // Send the weather data as the response
-        res.json(weatherData);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to fetch weather data' });
-    }
-});
-
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Root route to check if the server is running
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html')); // Fix path.join usage
-});
+  res.sendFile(path.join(__dirname, '../public/index.html'))
+})
 
+app.post('/weather', (req, res) => {
+  const choice = req.body.choice
 
-app.post('/data', (req, res) => {
-    const choice = req.body.choice
-  
-    const filteredData = data.filter((entry) => entry.type === choice)
-  
-    res.json(filtereddata)
-  })
-  
-// Use the port from the .env file or default to 3000 if not set
-const PORT = process.env.PORT || 3000;
+  const filteredData = weatherData.filter((entry) => entry.type === choice)
 
-// Start the server
+  res.json(filteredData)
+})
+
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+  console.log(`Listening on port: ${PORT}`)
+})
