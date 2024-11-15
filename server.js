@@ -3,19 +3,32 @@
 require('dotenv').config();  // Load environment variables from .env file
 const express = require('express');
 const axios = require('axios');
-const path = require('path'); // Fix the 'Const' typo
-const data = require('data.json'); // Ensure the path to the data.json is correct
+const path = require('path'); // Correctly using path
+const data = require('./data.json'); // Ensure the path to the data.json is correct
 
 const app = express();
 
-// Use the port from the .env file or default to 3000 if not set
-const PORT = process.env.PORT || 3000;
+// Middleware to parse JSON requests
+app.use(express.json());  // Parse JSON-formatted request bodies
+
+// Define the POST route for /data.json (you were missing this route)
+app.post('/data.json', (req, res) => {
+    const choice = req.body.choice;
+
+    // Check if choice is provided
+    if (!choice) {
+        return res.status(400).json({ error: 'Choice is required' });
+    }
+
+    // Filter the data based on the choice
+    const filteredData = data.filter((entry) => entry.type === choice);
+
+    // Send the filtered data as the response
+    res.json(filteredData);
+});
 
 // Define the Open-Meteo API URL
 const METEO_API_URL = 'https://api.open-meteo.com/v1/forecast';
-
-// Middleware to parse JSON requests
-app.use(express.json());
 
 // Endpoint to get weather for a specific location (latitude, longitude)
 app.get('/weather', async (req, res) => {
@@ -55,25 +68,25 @@ app.get('/weather', async (req, res) => {
     }
 });
 
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Root route to check if the server is running
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/SERVER/index.html')); // Fix path.join usage
+    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Fix path.join usage
 });
+
 
 app.post('/data', (req, res) => {
-    const choice = req.body.choice;
-
-    // Check if choice is provided
-    if (!choice) {
-        return res.status(400).json({ error: 'Choice is required' });
-    }
-
-    // Filter the data based on the choice
-    const filteredData = data.filter((entry) => entry.type === choice);
-
-    // Send the filtered data as the response
-    res.json(filteredData);
-});
+    const choice = req.body.choice
+  
+    const filteredData = data.filter((entry) => entry.type === choice)
+  
+    res.json(filtereddata)
+  })
+  
+// Use the port from the .env file or default to 3000 if not set
+const PORT = process.env.PORT || 3000;
 
 // Start the server
 app.listen(PORT, () => {
