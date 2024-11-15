@@ -4,7 +4,7 @@ require('dotenv').config();  // Load environment variables from .env file
 const express = require('express');
 const axios = require('axios');
 const path = require('path'); // Correctly using path
-const data = require('./data.json'); // Ensure the path to the data.json is correct
+const data = require('./data/data.json'); // Ensure the path to the data.json is correct
 
 const app = express();
 
@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());  // Parse JSON-formatted request bodies
 
 // Define the POST route for /data.json (you were missing this route)
-app.post('/data.json', (req, res) => {
+app.post('/data', (req, res) => {
     const choice = req.body.choice;
 
     // Check if choice is provided

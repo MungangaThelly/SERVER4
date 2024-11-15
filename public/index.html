@@ -6,21 +6,19 @@
   <title>Document</title>
 </head>
 <body>
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrimeReport</title>
   </head>
   <body>
-    <h1>Crime Report</h1>
+    <h1>Weather Prognosis</h1>
+  <div class="form-container">
     <form action="/data.json" method="POST">
-      <button type="submit" name="choice" value="Daily">DailyWheather Variables</button>
-      <button type="submit" name="choice" value="Current">Current Wheather</button>
-      <button type="submit" name="choice" value="Hourly">Hourly Wheather Variables</button>
+      <button type="submit" name="choice" value="Daily">Daily Weather Variables</button>
+      <button type="submit" name="choice" value="Current">Current Weather</button>
+      <button type="submit" name="choice" value="Hourly">Hourly Weather Variables</button>
     </form>
-  </body>
-  </html>
+  </div>
+
+  <div id="result" class="result">
+    <!-- Filtered data or errors will appear here -->
+  </div>
 </body>
 </html>
